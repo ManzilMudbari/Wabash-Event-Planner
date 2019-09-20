@@ -5,6 +5,7 @@ import com.eventplanner.common.EventInput;
 import com.eventplanner.common.Reader;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class EventManager implements EventInput {
@@ -36,42 +37,51 @@ public class EventManager implements EventInput {
         if (!yearDir.exists()) {
             yearDir.mkdirs();
         }
-        File file = new File(yearDir, String.valueOf(month) + ".txt");
-        BufferedWriter fileOutputStream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
-        fileOutputStream.write(String.valueOf(event.getStartDate().getTime()));
-        fileOutputStream.newLine();
-        fileOutputStream.write(event.isAllDay() ? "y" : "n");
-        fileOutputStream.newLine();
-        fileOutputStream.write(event.getDescription());
-        fileOutputStream.newLine();
-        fileOutputStream.close();
 
+        try (BufferedWriter fileOutputStream = new BufferedWriter(
+                new OutputStreamWriter(
+                        new FileOutputStream(
+                                new File(yearDir, String.valueOf(month) + ".txt"), true)))) {
+            fileOutputStream.write(String.valueOf(event.getStartDate().getTime()));
+            fileOutputStream.newLine();
+            fileOutputStream.write(event.isAllDay() ? "y" : "n");
+            fileOutputStream.newLine();
+            fileOutputStream.write(event.isUserEvent() ? "u" : "w");
+            fileOutputStream.newLine();
+            fileOutputStream.write(event.getDescription());
+            fileOutputStream.newLine();
+        }
     }
 
     @Override
-    public Event inputNewEvent(Calendar calendar) throws IOException {
+    public boolean inputNewEvent(Calendar calendar) throws IOException {
+        System.out.println();
+        if (!getEntryConfirmation(calendar)) {
+            return false;
+        }
         System.out.print("Enter the Event Description :");
         String description = Reader.readLine();
         System.out.print("Is this an All-Day Event (Y or N)?");
         boolean allDay = Reader.readLine().startsWith("Y");
-        do {
-            try {
-                System.out.print("What time does this Occur at (Format HH:MM)?");
-                String s = Reader.readLine();
-                String[] split = s.split(":");
-                int hour = Integer.parseInt(split[0]);
-                int mins = Integer.parseInt(split[1]);
-
-                calendar.set(Calendar.MINUTE, mins);
-                calendar.set(Calendar.HOUR, hour);
-
-                SimpleEvent simpleEvent = new SimpleEvent(calendar.getTime(), true, description);
-                saveEvent(simpleEvent);
-                return simpleEvent;
-            } catch (NumberFormatException ex) {
-                System.out.print("Invalid time input please use format \"HH:MM\" :");
-            }
-        } while (true);
+        if (!allDay) {
+            do {
+                try {
+                    System.out.print("What time does this Occur at (Format HH:MM)?");
+                    String s = Reader.readLine();
+                    String[] split = s.split(":");
+                    int hour = Integer.parseInt(split[0].replaceAll("\\s+", ""));
+                    int mins = Integer.parseInt(split[1].replaceAll("\\s+", ""));
+                    calendar.set(Calendar.MINUTE, mins);
+                    calendar.set(Calendar.HOUR, hour);
+                    break;
+                } catch (NumberFormatException ex) {
+                    System.out.print("Invalid time input please use format \"HH:MM\" :");
+                }
+            } while (true);
+        }
+        SimpleEvent simpleEvent = new SimpleEvent(calendar.getTime(), allDay, true, description);
+        saveEvent(simpleEvent);
+        return true;
 
     }
 
@@ -90,16 +100,40 @@ public class EventManager implements EventInput {
         List<Event> list = new ArrayList<>();
         if (file.exists()) {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
-                Date startDate = new Date(Long.valueOf(bufferedReader.readLine()));
-                boolean allDay = bufferedReader.readLine().equals("y");
-                String description = bufferedReader.readLine();
-                list.add(new SimpleEvent(startDate, allDay, description));
+                while (true) {
+                    String readLine = bufferedReader.readLine();
+                    if (readLine == null) {
+                        break;
+                    }
+                    String dateValue = readLine.replaceAll("\\s+", "");
+                    Date startDate = new Date(Long.valueOf(dateValue));
+                    boolean allDay = bufferedReader.readLine().replaceAll("\\s+", "").equals("y");
+                    boolean userEvent = bufferedReader.readLine().replaceAll("\\s+", "").equals("u");
+                    String description = bufferedReader.readLine();
+                    list.add(new SimpleEvent(startDate, allDay, userEvent, description));
+                }
             } catch (EOFException ignore) {
             }
             return list;
 
         } else {
             return Collections.emptyList();
+        }
+    }
+
+
+    public boolean getEntryConfirmation(Calendar inputCalendar) throws IOException {
+        while (true) {
+            System.out.print("Do you want to add a new event on " + new SimpleDateFormat("MMMM d YYYY").format(inputCalendar.getTime()) + "? (Y/N/Q) :");
+            String s = Reader.readLine().toLowerCase();
+            if (s.equals("q")) {
+                System.out.println("Good Bye!!");
+                System.exit(0);
+            } else if (s.equals("y")) {
+                return true;
+            } else if (s.equals("n")) {
+                return false;
+            }
         }
     }
 

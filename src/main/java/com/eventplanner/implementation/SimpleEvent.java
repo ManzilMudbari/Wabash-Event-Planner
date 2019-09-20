@@ -7,24 +7,15 @@ import java.util.Date;
 public class SimpleEvent implements Event {
     boolean allDay;
     boolean userEvent;
-    Date startDate;
-    Date endDate;
+    Date date;
     String description;
 
-    public SimpleEvent(Date startDate, Date endDate, boolean isUserEvent, String description) {
-        this.startDate = startDate;
-        this.endDate = endDate;
+
+    public SimpleEvent(Date date, boolean allDay, boolean isUserEvent, String description) {
+        this.date = date;
         this.userEvent = isUserEvent;
         this.description = description;
-        this.allDay = false;
-    }
-
-    public SimpleEvent(Date startDate, boolean isUserEvent, String description) {
-        this.startDate = startDate;
-        this.userEvent = isUserEvent;
-        this.description = description;
-        this.allDay = true;
-
+        this.allDay = allDay;
     }
 
     @Override
@@ -39,12 +30,12 @@ public class SimpleEvent implements Event {
 
     @Override
     public Date getStartDate() {
-        return startDate;
+        return date;
     }
 
     @Override
     public Date getEndDate() {
-        return endDate;
+        return date;
     }
 
     @Override

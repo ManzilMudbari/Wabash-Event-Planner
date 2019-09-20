@@ -24,10 +24,6 @@ public class SimpleMonth implements Month {
         monthStart.set(Calendar.DAY_OF_MONTH, 1);
         int firstDayOfWeek = monthStart.getFirstDayOfWeek();
         // find out when the month ends
-        monthStart.getActualMaximum(Calendar.DAY_OF_WEEK);
-        monthStart.add(Calendar.MONTH, 1);
-        monthStart.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.add(Calendar.DATE, -1);
         int actualMaximum = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
         // print the month
