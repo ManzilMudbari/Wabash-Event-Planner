@@ -1,6 +1,6 @@
 package com.eventplanner.service;
 
-public interface WabashEvent {
+public interface IWabashEvent {
 /**
  * Designates which dates are ones that have a Wabash event.
  *

@@ -1,6 +1,6 @@
 package com.eventplanner.service;
 
-public interface EventInput {
+public interface IEventInput {
     /**
      * Designates that a given date has no user events.
      *

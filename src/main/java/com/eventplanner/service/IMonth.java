@@ -1,12 +1,12 @@
 package com.eventplanner.service;
 
-interface Month {
+public interface IMonth {
     /**
      * Designates which days that are being changed in the month.
      *
      * @param newEvent Appends the Month with the new event.
      */
-    void setNewDates(EventInput newEvent);
+    void setNewDates(IEventInput newEvent);
     /**
      * Function that returns how many days are in a month.
      *

@@ -1,12 +1,12 @@
 package com.eventplanner.service;
 
-public interface MonthFinder {
+public interface IMonthFinder {
     /**
      * Designates what month the program displays first.
      *
-     * @param baseMonth user sees starting month
+     * @param baseIMonth user sees starting month
      */
-    void setCurrentMonth(Month baseMonth);
+    void setCurrentMonth(IMonth baseIMonth);
     /**
      * Queries the User to select the desired month.
      *
