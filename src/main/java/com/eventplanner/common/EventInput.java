@@ -1,5 +1,8 @@
 package com.eventplanner.common;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -13,8 +16,9 @@ public interface EventInput {
     /**
      * Queries the user to add a new event to the month.
      * Takes in the Event detail that are to be appended.
+     * @param calendar
      */
-    Event inputNewEvent();
+    Event inputNewEvent(Calendar calendar) throws IOException;
 
-    List<Event> getEvent(Date date);
+    List<Event> getEvent(Date date) throws IOException;
 }

@@ -37,10 +37,12 @@ public class SimpleMonth implements Month {
         System.out.print('|');
         int i = firstDayOfWeek - 6;
         int j = 1;
+        // print first line which may be empty
         while (i++ < 0) {
             System.out.print(SPACE);
             j++;
         }
+        // print rest of the days
         while (i < actualMaximum) {
             printDay(i++);
             if (j++ % 7 == 0) {
@@ -49,6 +51,7 @@ public class SimpleMonth implements Month {
             }
         }
         printDay(i);
+        System.out.println();
     }
 
     private void printDay(int day) {
@@ -57,5 +60,11 @@ public class SimpleMonth implements Month {
         } else {
             System.out.print("     " + day + "    |");
         }
+    }
+
+
+    @Override
+    public Calendar getCalendar() {
+        return (Calendar) calendar.clone();
     }
 }

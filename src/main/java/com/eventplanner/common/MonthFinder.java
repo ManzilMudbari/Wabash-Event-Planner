@@ -1,5 +1,8 @@
 package com.eventplanner.common;
 
+import java.io.IOException;
+import java.util.Calendar;
+
 public interface MonthFinder {
     /**
      * Designates what month should be printed to start.
@@ -10,14 +13,6 @@ public interface MonthFinder {
     /**
      * Queries the User to select the desired month.
      *
-     * @return the number of the desired month.
      */
-    int inputCurrentMonth();
-
-    /**
-     * Queries the User to pick which day they want to see
-     *
-     * @return the User's disired day to be displayed.
-     */
-    int inputCurrentDay();
+    Calendar inputDate(Calendar date) throws IOException;
 }
