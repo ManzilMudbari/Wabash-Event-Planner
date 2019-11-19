@@ -38,7 +38,7 @@ public class EventManager implements EventInput {
         }
         File file = new File(yearDir, String.valueOf(month) + ".txt");
         BufferedWriter fileOutputStream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
-        fileOutputStream.write(event.getStartDate().toString());
+        fileOutputStream.write(String.valueOf(event.getStartDate().getTime()));
         fileOutputStream.newLine();
         fileOutputStream.write(event.isAllDay() ? "y" : "n");
         fileOutputStream.newLine();
@@ -86,11 +86,11 @@ public class EventManager implements EventInput {
         instance.setTime(date);
         int year = instance.get(Calendar.YEAR);
         int month = instance.get(Calendar.MONTH);
-        File file = new File(new File(homeDirectory, String.valueOf(year)), String.valueOf(month));
+        File file = new File(new File(homeDirectory, String.valueOf(year)), String.valueOf(month) + ".txt");
         List<Event> list = new ArrayList<>();
         if (file.exists()) {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
-                Date startDate = new Date(Date.parse(bufferedReader.readLine()));
+                Date startDate = new Date(Long.valueOf(bufferedReader.readLine()));
                 boolean allDay = bufferedReader.readLine().equals("y");
                 String description = bufferedReader.readLine();
                 list.add(new SimpleEvent(startDate, allDay, description));
